@@ -1,0 +1,14 @@
+#mapcanvas{
+    min-height:500px;
+}
+/* Stop collision between Gmaps and Bootstrap*/
+img[src*="gstatic.com/"], img[src*="googleapis.com/"]  {
+    max-width: 99999px;
+}
+.alert{display: none;}
+.green{background-color: darkseagreen;}
+.upgrade-notice { display: none; }
+.ie6 .upgrade-notice { display: block; }
+.ie7 .upgrade-notice { display: block; }
+.ie8 .upgrade-notice { display: block; }
+.ie9 .upgrade-notice { display: block; }

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Track Distance</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="css/bootstrap.min.css" rel="stylesheet"/>
+        <link href="css/main.css" rel="stylesheet"/>
+        <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="http://maps.google.co.uk/maps/api/js?libraries=geometry&sensor=false"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <h1>Welcome IE 6 user!</h1>
+            <p>Im not going to make fun of a minority.</p> 
+            <p>If anyone asks you used this application and thought it was the best frontpage built iframe flashing tile homage to a defunct sci-fi show/pet turtle you have ever seen.</p>
+            <p>Thanks for stopping by!</p>
+        <![endif]-->
+        <!--[if lt IE 9]>
+            <p>Please upgrade your browser. This application currently requires Internet Explorer 10.</p>
+        <![endif]-->
+        <div class="container-fluid">
+            <div class="alert" id="alertstatus">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <span id="status"><strong>Warning!</strong> Ninja Ducks Everywhere!</span>
+            </div>
+            <div>
+                <h3>Track Distance</h3>
+            </div>
+
+            <div class="row-fluid">
+                <div class="span4">
+                    <div class="input-append">
+                        <h4>Select Playlist</h4>
+                        <select id="playlists"></select>
+                        <input type="button" id="playlistselect" value="Get Playlist Tracks" class="btn">
+                    </div>
+                    <div id="tracks">
+                        <h4>Track - Artist - Duration (m.s)</h4>
+                        <ul id="tracklist"></ul>
+                        <p>New Playlist Title:</p>
+                        <input type="text" id="newpltitle"/>
+                        <p>New Playlist Description:</p>
+                        <input type="text" id="newpldesc"/><br />
+                        <input type="button" id="newplbtn" value="Create New Playlist" class="btn">
+                    </div>
+                </div>
+                <div id="mapcanvas" class="span4"></div>
+                <div id="route" class="span4">
+                    <h4>Create Route</h4>
+                    <p>From:</p>
+                    <input type="text" id="depart" placeholder="From"/>
+                    <p>To:</p>
+                    <input type="text" id="destination"/>
+                    <p>Travel Method</p>
+                    <select id="travelmode">
+                        <option value="BICYCLING">Cycle</option>
+                        <option value="DRIVING">Driving</option>
+                        <option value="WALKING">Walking</option>
+                    </select>
+                    <br />
+                    <input type="button" id="routebtn" value="Submit Route" class="btn">
+                </div>
+
+            </div>
+            <div>
+                <h2>Status</h2>
+                <textarea id="output" class="text-info"></textarea>
+            </div>
+        </div>
+        <script id="playlists-template" type="text/x-handlebars-template">
+            {{#playlist}}
+            <option value="{{id}}">{{title}}</option>
+            {{/playlist}}
+        </script>
+        <script id="tracklist-template" type="text/x-handlebars-template">
+            {{#track}}
+            <li class="track" draggable="true"><span id="{{sequence}}">{{title}} - {{creator}} - {{formattedDuration}}</span></li>
+            {{/track}}
+        </script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/tdapi.gmap-0.1.0.js"></script>
+        <script src="js/tdapi.dandd-0.1.0.js"></script>
+        <script src="js/md5.js"></script>
+        <script src="js/handlebars.js"></script>
+        <script src="js/tdapi.lastfm-0.1.0.js"></script>
+        <script>
+            $(function() {
+            var url = window.location.href.split("?"),
+            token;
+            if (url.length > 1) {
+            token = url[1].split("=");
+            tdapi.gmap.init();
+            tdapi.lastfm.setToken(token[1]);
+            tdapi.lastfm.handleUserSession();
+            }else{
+            // No Token warn the user
+            $('#status').html(
+            "<strong>Warning!</strong> No token found. Are you sure your logged in to LastFm? Return to the index page <a href='index.html'>here</a>"
+            );
+            $('#alertstatus').addClass('alert-error');
+            $('.alert').show();
+            }
+
+            $("#playlistselect").click(function() {
+            $("#output").val("");
+            var option = $("#playlists").find('option').filter(":selected");
+            tdapi.lastfm.handlePlaylistSelect(option.val());
+            });
+
+            $("#routebtn").click(function() {
+            var from = $("#depart").val(),
+            to = $("#destination").val(),
+            travelmode = $("#travelmode").find('option').filter(":selected");
+            tdapi.gmap.handleBuildRoute(from, to, travelmode.val(), tdapi.lastfm.getTrackList(), tdapi.lastfm.getTrackListCount());
+            });
+            $("#newplbtn").click(function() {
+            var newPlaylistTitle = $("#newpltitle").val(),
+            newPlaylistDesc = $("#newpldesc").val();
+            tdapi.lastfm.handleNewPlayList(newPlaylistTitle, newPlaylistDesc);
+            });
+
+            $("#tracklist").on('drop', '.track', tdapi.dandd.handleDrop);
+
+            $("#tracklist").on('dragover', '.track', tdapi.dandd.handleCancel);
+            $("#tracklist").on('dragenter', '.track', tdapi.dandd.handleCancel);
+            $("#tracklist").on('dragleave', '.track', tdapi.dandd.handleCancel);
+            });
+        </script>
+    </body>
+</html>
