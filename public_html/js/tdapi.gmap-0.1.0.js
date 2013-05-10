@@ -85,7 +85,7 @@ tdapi.gmap = tdapi.gmap || {};
             optimized: false
         }),
         infoWindow = new google.maps.InfoWindow(),
-                html = '<h3 id="infowindow">' + header + '</h3><p class="infowindow">' + detail + '</p>';
+        html = '<h3 id="infowindow">' + header + '</h3><p class="infowindow">' + detail + '</p>';
         bindInfoWindow(newMarker, context.map, infoWindow, html);
         markerBounds.extend(new google.maps.LatLng(lat, lng));
         context.map.fitBounds(markerBounds);
@@ -108,11 +108,11 @@ tdapi.gmap = tdapi.gmap || {};
         if (index < points.length) {
             // There is still at least one point further from this point.
             var polyline = new google.maps.Polyline();
-            polyline.getPath().push(new google.maps.LatLng(points[index].jb, points[index].kb));
+            polyline.getPath().push(new google.maps.LatLng(points[index].lat(), points[index].lng()));
             if ((index + 1) === points.length) {
-                polyline.getPath().push(new google.maps.LatLng(points[index].jb, points[index].kb));
+                polyline.getPath().push(new google.maps.LatLng(points[index].lat(), points[index].lng()));
             } else {
-                polyline.getPath().push(new google.maps.LatLng(points[index + 1].jb, points[index + 1].kb));
+                polyline.getPath().push(new google.maps.LatLng(points[index + 1].lat(), points[index + 1].lng()));
             }
             // Get the distance from this point to the next point in the polyline.
             var distanceToNextPoint = polyline.inKm() * 1000;
@@ -224,13 +224,13 @@ tdapi.gmap = tdapi.gmap || {};
                         i,
                         points = [];
                 for (i = 0; i < overviewPathCollectionCount; i++) {
-                    polyline.getPath().push(new google.maps.LatLng(overviewPathCollection[i].jb, overviewPathCollection[i].kb));
-                    points.push(new google.maps.LatLng(overviewPathCollection[i].jb, overviewPathCollection[i].kb));
+                    polyline.getPath().push(new google.maps.LatLng(overviewPathCollection[i].lat(), overviewPathCollection[i].lng()));
+                    points.push(new google.maps.LatLng(overviewPathCollection[i].lat(), overviewPathCollection[i].lng()));
                     if (i === 0) {
-                        createMarker(overviewPathCollection[i].jb, overviewPathCollection[i].kb, 'Route Start', '');
+                        createMarker(overviewPathCollection[i].lat(), overviewPathCollection[i].lng(), 'Route Start', '');
                     }
                     if (i === (overviewPathCollectionCount - 1)) {
-                        createMarker(overviewPathCollection[i].jb, overviewPathCollection[i].kb, 'Route End', '');
+                        createMarker(overviewPathCollection[i].lat(), overviewPathCollection[i].lng(), 'Route End', '');
                     }
                 }
         
@@ -247,40 +247,13 @@ tdapi.gmap = tdapi.gmap || {};
                     markerPoints = getTrackPoints(trackListCount, speed, trackList, points);
                     markerPointsCount = markerPoints.length;
                     for (i = 0; i < markerPointsCount; i++) {
-                        createMarker(markerPoints[i].jb, markerPoints[i].kb, markerPoints[i].track, 'Track Finishes Playing Here.');
+                        createMarker(markerPoints[i].lat(), markerPoints[i].lng(), markerPoints[i].track, 'Track Finishes Playing Here.');
                         $("#" + markerPoints[i].sequence).addClass("green");
                         playlistHighlights.push(markerPoints[i].sequence);
                     }
                 }
             }
         });
-        //polyline.setEditable(true);
-        
-        /*google.maps.event.addListener(polyline, 'capturing_changed', function() {
-            var array = polyline.getPath(); //getPath() gives u array of current markers latlng over map 
-
-            var tempDistance = 0;
-
-            var tempPathArray = [];
-
-            for (i = 0; i < array.length; i++) {
-
-                tempPathArray.push(array.getAt(i));
-
-            }
-console.log("Event Fired");
-
-            for (k = 1; k < tempPathArray.length; k++)
-
-            {
-
-
-                var calculateNewDistance = google.maps.geometry.spherical.computeDistanceBetween(tempPathArray[k - 1], tempPathArray[k]);
-
-                tempDistance += calculateNewDistance;
-
-            }
-        });*/
     }
 
     context.init = function() {
@@ -290,12 +263,8 @@ console.log("Event Fired");
             center: latlng,
             scaleControl: true,
             mapTypeControl: false,
-            //navigationControl: false,
             streetViewControl: false,
             mapTypeId: google.maps.MapTypeId.ROADMAP
-            //draggableCursor: 'auto',
-	    //draggingCursor: 'move',
-	    //disableDoubleClickZoom: true
         };
         context.map = new google.maps.Map(document.getElementById("mapcanvas"), myOptions);
 

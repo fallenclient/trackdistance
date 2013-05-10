@@ -126,6 +126,15 @@ Thumbs.db
 # Folder config file
 Desktop.ini
 
+#############
+## Intern
+#############
+intern/
+
+#############
+## Netbeans
+#############
+nbproject/
 
 #############
 ## Python
