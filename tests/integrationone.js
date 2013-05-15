@@ -11,7 +11,7 @@ define([
 
 		'submit form': function () {
 			return this.remote
-				.get(require.toUrl('./index.html'))
+				.get(require.toUrl('index.html'))
                                 .waitForElementByClassName('username')
                                 .elementById('username')
                                         .click()
