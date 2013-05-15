@@ -1,0 +1,20 @@
+---
+language: node_js
+node_js:
+- 0.8
+env:
+  global:
+  - secure: |-
+      KsdUxDuhNnNL+GMA5mw79j9ld01v0uybZrCIt41H/ifwwuwt9WclymqJnS2l
+      nqzmNzzsf7a1cs/8ad1CzHna+cGZAodick5ECKdVcK7asa7xopH99iGmU6pN
+      Dk3YYZzJjlCI/IL8qCKzV4tQBzVSvxnYoC+HhQvMSwDpovjn/Uk=
+  - secure: |-
+      kbZwPHkWnqREAgs2fXh1c03wInOb/KcbgW+I2483PWdXwIaQIVIoZw9YETtm
+      6q1lIYWKs7NjQRzblG3r0pCkMD9gKKKQBVFtpOlh8HzHUbz0FcMfkHK3ZYjN
+      hy0/iUNtj234AFR8DNlfEYEtWL0KN+5cJV7w7TDQ0n3jENkczYk=
+install:
+- git submodule update --init --recursive
+- git clone --recursive https://github.com/theintern/intern.git
+- cd ../intern
+- npm install --production
+script: node runner.js config=../tests/intern.js
