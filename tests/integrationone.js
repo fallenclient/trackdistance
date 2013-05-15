@@ -1,9 +1,8 @@
 define([
 	'intern!object',
 	'intern/chai!assert',
-	'../Request',
 	'require'
-], function (registerSuite, assert, Request, require) {
+], function (registerSuite, assert, require) {
 	//var request,
 	//	url = 'http://www.fishblade.co.uk/theintern/intern';
 
