@@ -15,6 +15,6 @@ env:
 install:
 - git submodule update --init --recursive
 - git clone --recursive https://github.com/theintern/intern.git
-- cd ../intern
+- cd intern
 - npm install --production
 script: node runner.js config=../tests/intern.js
