@@ -16,23 +16,23 @@ tdapi.distance = tdapi.distance || {};
         kph: {
             ms: function() {
                 var calc = distance / 3600 * 1000;
-                return calc.toFixed(6);
+                return calc.toFixed(4);
             }
         },
         mph: {
             ms: function() {
                 var calc = distance / 3600 * 1609.34;
-                return calc.toFixed(6);
+                return calc.toFixed(4);
             }
         },
         ms: {
             mph: function() {
                 var calc = distance * 3600 / 1609.34;
-                return calc.toFixed(6);
+                return calc.toFixed(4);
             },
             kph: function() {
                 var calc = distance * 3600 / 1000;
-                return calc.toFixed(6);
+                return calc.toFixed(4);
             }
         }
     };
