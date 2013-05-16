@@ -50,19 +50,13 @@
                     <p>From:</p>
                     <input type="text" id="depart" placeholder="From"/>
                     <p>To:</p>
-                    <input type="text" id="destination" placeholder="To"/>
+                    <input type="text" id="destination"/>
                     <p>Travel Method</p>
                     <select id="travelmode">
                         <option value="BICYCLING">Cycle</option>
                         <option value="DRIVING">Driving</option>
                         <option value="WALKING">Walking</option>
                     </select>
-                    <!--<p>Average Speed</p>
-                    <input id="avgspeed" type="text" placeholder="Speed"/>
-                    <select id="speedtype">
-                        <option value="MPH">MPH</option>
-                        <option value="KPH">KPH</option>
-                    </select>-->
                     <br />
                     <input type="button" id="routebtn" value="Submit Route" class="btn">
                 </div>
@@ -84,14 +78,14 @@
             {{/track}}
         </script>
         <script src="js/bootstrap.min.js"></script>
-        <script src="js/tdapi.distance-0.1.0.js"></script>
         <script src="js/tdapi.gmap-0.1.0.js"></script>
         <script src="js/tdapi.dandd-0.1.0.js"></script>
         <script src="js/md5.js"></script>
         <script src="js/handlebars.js"></script>
         <script src="js/tdapi.lastfm-0.1.0.js"></script>
         <script>
-            $(function() {            
+            $(function() {
+            
             var url = window.location.href.split("?"),
             token;
             if (url.length > 1) {
@@ -117,10 +111,8 @@
             $("#routebtn").click(function() {
             var from = $("#depart").val(),
             to = $("#destination").val(),
-            travelmode = $("#travelmode").find('option').filter(":selected"),
-            avgSpeedMetric = $("#speedtype").find('option').filter(":selected"),
-            avgSpeed = $("#avgspeed").val();
-            tdapi.gmap.handleBuildRoute(from, to, travelmode.val(), parseFloat(avgSpeed), avgSpeedMetric.val(), tdapi.lastfm.getTrackList(), tdapi.lastfm.getTrackListCount());
+            travelmode = $("#travelmode").find('option').filter(":selected");
+            tdapi.gmap.handleBuildRoute(from, to, travelmode.val(), tdapi.lastfm.getTrackList(), tdapi.lastfm.getTrackListCount());
             });
             $("#newplbtn").click(function() {
             var newPlaylistTitle = $("#newpltitle").val(),

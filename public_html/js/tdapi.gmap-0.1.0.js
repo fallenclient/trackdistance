@@ -12,7 +12,8 @@ tdapi.gmap = tdapi.gmap || {};
     var polylineArray = [],
             markerArray = [],
             markerBounds = new google.maps.LatLngBounds(),
-            playlistHighlights = [];
+            playlistHighlights = [],
+            speed;
 
     /**
      * Bind Info Window
@@ -62,11 +63,16 @@ tdapi.gmap = tdapi.gmap || {};
     function resetPlaylistHighlights() {
         var playlistHighlightsCount = playlistHighlights.length,
                 i;
-        for(i=0;i<playlistHighlightsCount;i++){
-           $("#" + playlistHighlights[i]).removeClass("green"); 
+        for (i = 0; i < playlistHighlightsCount; i++) {
+            $("#" + playlistHighlights[i]).removeClass("green");
         }
         playlistHighlights.length = 0;
     }
+    
+    
+        function resetSpeed() {
+            speed = "";
+        };
 
     /**
      * Create Marker
@@ -85,7 +91,7 @@ tdapi.gmap = tdapi.gmap || {};
             optimized: false
         }),
         infoWindow = new google.maps.InfoWindow(),
-        html = '<h3 id="infowindow">' + header + '</h3><p class="infowindow">' + detail + '</p>';
+                html = '<h3 id="infowindow">' + header + '</h3><p class="infowindow">' + detail + '</p>';
         bindInfoWindow(newMarker, context.map, infoWindow, html);
         markerBounds.extend(new google.maps.LatLng(lat, lng));
         context.map.fitBounds(markerBounds);
@@ -192,7 +198,7 @@ tdapi.gmap = tdapi.gmap || {};
      * @param {object} trackList
      * @param {number} trackListCount
      */
-    function buildRoute(from, destination, travelMode, trackList, trackListCount) {
+    function buildRoute(from, destination, travelMode, avgSpeed, avgSpeedMetric, trackList, trackListCount) {
         var selectedTravelMode;
         switch (travelMode) {
             case "BICYCLING":
@@ -233,15 +239,30 @@ tdapi.gmap = tdapi.gmap || {};
                         createMarker(overviewPathCollection[i].lat(), overviewPathCollection[i].lng(), 'Route End', '');
                     }
                 }
-        
+
                 polyline.setMap(context.map);
                 polylineArray.push(polyline);
                 var distance = response.routes[0].legs[0].distance.value,
                         duration = response.routes[0].legs[0].duration.value,
-                        speed = distance.toFixed(1) / Math.floor(duration),
                         markerPoints,
                         markerPointsCount;
-
+                
+                if (avgSpeed > 0) {
+                    console.log(avgSpeed);
+                    speed = tdapi.distance.convert(avgSpeed).from(avgSpeedMetric).to('ms');
+                    //toFixed is a String!!!! 
+                    console.log(typeof speed);
+                    if (speed instanceof Error) {
+                        $('#status').html(
+                            "<strong>Warning!</strong> Average Speed value should be a number!<br />e.g. 1.00 or 10"
+                            );
+                        $('#alertstatus').addClass('alert-error');
+                        $('.alert').show();
+                        speed = distance.toFixed(1) / Math.floor(duration);
+                    }
+                } else {
+                    speed = distance.toFixed(1) / Math.floor(duration);
+                }
                 if (trackListCount > 0) {
                     // trackList is array
                     markerPoints = getTrackPoints(trackListCount, speed, trackList, points);
@@ -249,6 +270,8 @@ tdapi.gmap = tdapi.gmap || {};
                     for (i = 0; i < markerPointsCount; i++) {
                         createMarker(markerPoints[i].lat(), markerPoints[i].lng(), markerPoints[i].track, 'Track Finishes Playing Here.');
                         $("#" + markerPoints[i].sequence).addClass("green");
+                        //$("#avgspeed").val(speed);
+
                         playlistHighlights.push(markerPoints[i].sequence);
                     }
                 }
@@ -269,11 +292,18 @@ tdapi.gmap = tdapi.gmap || {};
         context.map = new google.maps.Map(document.getElementById("mapcanvas"), myOptions);
 
 
-        context.handleBuildRoute = function(from, to, travelMode, trackList, trackListCount) {
+        context.handleBuildRoute = function(from, to, travelMode, avgSpeed, avgSpeedMetric, trackList, trackListCount) {
             resetMarkers();
             resetPlaylistHighlights();
             resetPolyline();
-            buildRoute(from, to, travelMode, trackList, trackListCount);
+            resetSpeed();
+            try {
+                buildRoute(from, to, travelMode, avgSpeed, avgSpeedMetric, trackList, trackListCount);
+            } catch (ex) {
+                if (ex instanceof InvalidContext) {
+                    
+                }
+            }
         };
     };
 })(tdapi.gmap);

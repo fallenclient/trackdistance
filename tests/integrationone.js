@@ -3,15 +3,13 @@ define([
 	'intern/chai!assert',
 	'require'
 ], function (registerSuite, assert, require) {
-	//var request,
-	//	url = 'http://www.fishblade.co.uk/theintern/intern';
 
 	registerSuite({
-		name: 'demo',
+		name: 'integrationone',
 
-		'submit form': function () {
+		'sign in': function () {
 			return this.remote
-				.get(require.toUrl('index.html'))
+				.get(require.toUrl('./public_html/index.html'))
                                 .waitForElementByClassName('username')
                                 .elementById('username')
                                         .click()
@@ -25,15 +23,6 @@ define([
                                         .click()
                                         .end()
                                 .takeScreenshot()
-				//.elementById('operation')
-				//	.click()
-				//	.type('hello, world')
-				//.end()
-				//.elementById('submit')
-				//	.click()
-				//.end()
-				//.waitForElementById('result')
-				//.text()
                                 .elementById('playlists')
 				.then(function (playlistElements) {
 					assert.equal(playlistElements.length, '9', 'Should be items in the playlist once authenticated');
