@@ -57,12 +57,12 @@
                         <option value="DRIVING">Driving</option>
                         <option value="WALKING">Walking</option>
                     </select>
-                    <!--<p>Average Speed</p>
+                    <p>Average Speed</p>
                     <input id="avgspeed" type="text" placeholder="Speed"/>
                     <select id="speedtype">
                         <option value="MPH">MPH</option>
                         <option value="KPH">KPH</option>
-                    </select>-->
+                    </select>
                     <br />
                     <input type="button" id="routebtn" value="Submit Route" class="btn">
                 </div>
@@ -90,6 +90,7 @@
         <script src="js/md5.js"></script>
         <script src="js/handlebars.js"></script>
         <script src="js/tdapi.lastfm-0.1.0.js"></script>
+        <!--<script src="js/tdapi.echonest-0.1.0.js"></script>-->
         <script>
             $(function() {            
             var url = window.location.href.split("?"),
@@ -112,8 +113,10 @@
             $("#output").val("");
             var option = $("#playlists").find('option').filter(":selected");
             tdapi.lastfm.handlePlaylistSelect(option.val());
+            // @todo get list of tracks back for construction
+            // Call echonest functions pass in tracks to get bpm for each
             });
-
+            // Click to build new route
             $("#routebtn").click(function() {
             var from = $("#depart").val(),
             to = $("#destination").val(),
@@ -122,14 +125,16 @@
             avgSpeed = $("#avgspeed").val();
             tdapi.gmap.handleBuildRoute(from, to, travelmode.val(), parseFloat(avgSpeed), avgSpeedMetric.val(), tdapi.lastfm.getTrackList(), tdapi.lastfm.getTrackListCount());
             });
+            // Click to create new playlist
             $("#newplbtn").click(function() {
             var newPlaylistTitle = $("#newpltitle").val(),
             newPlaylistDesc = $("#newpldesc").val();
             tdapi.lastfm.handleNewPlayList(newPlaylistTitle, newPlaylistDesc);
             });
 
+            // Drag and Drop handlers
             $("#tracklist").on('drop', '.track', tdapi.dandd.handleDrop);
-
+            // Drag and Drop cancel other events
             $("#tracklist").on('dragover', '.track', tdapi.dandd.handleCancel);
             $("#tracklist").on('dragenter', '.track', tdapi.dandd.handleCancel);
             $("#tracklist").on('dragleave', '.track', tdapi.dandd.handleCancel);

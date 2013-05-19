@@ -137,6 +137,21 @@ intern/
 nbproject/
 
 #############
+## Grunt
+#############
+Gruntfile.js
+
+#############
+## Node Package
+#############
+package.json
+
+#############
+## Node Modules
+#############
+node_modules/
+
+#############
 ## Python
 #############
 

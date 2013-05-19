@@ -28,7 +28,7 @@ tdapi.dandd = tdapi.dandd || {};
             this.innerHTML = e.originalEvent.dataTransfer.getData('text');
         }
         var seqIds = [];
-        $(".track").find("span").each(function(){ seqIds.push(parseInt(this.id - 1)); });
+        $(".track").find("span").each(function(){ seqIds.push(parseInt(this.id - 1, 10)); });
         tdapi.lastfm.handleSortTrackList(seqIds);
         return false;
     };

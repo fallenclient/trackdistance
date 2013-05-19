@@ -40,7 +40,6 @@ tdapi.distance = tdapi.distance || {};
     function handleFrom(unit) {
         from = unit.toLowerCase();
     }
-    ;
 
     function InvalidConvert(message) {
         this.message = message;

@@ -208,6 +208,7 @@ tdapi.lastfm = tdapi.lastfm || {};
                     $("#tracklist").html(trackListTemplate(trackList));
                     // Initialize drag and drop now we have the track list li's loaded
                     tdapi.dandd.init();
+                    
                 } else {
                     $("#output").val($("#output").val() + " Error: " + data.error + " Message: " + data.message + "\n");
                 }

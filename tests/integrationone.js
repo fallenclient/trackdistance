@@ -10,7 +10,7 @@ define([
 		'sign in': function () {
 			return this.remote
 				.get(require.toUrl('http://www.fishblade.co.uk/tdapi/trackdistance/index.html'))
-                                .waitForElementByClassName('username')
+                                .waitForElementById('username')
                                 .elementById('username')
                                         .click()
                                         .type('fallenclient01')

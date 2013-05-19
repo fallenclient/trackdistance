@@ -72,7 +72,7 @@ tdapi.gmap = tdapi.gmap || {};
     
         function resetSpeed() {
             speed = "";
-        };
+        }
 
     /**
      * Create Marker
@@ -195,6 +195,8 @@ tdapi.gmap = tdapi.gmap || {};
      * @param {string} from Hackney Way, Westbury
      * @param {string} destination Short Street, Melksham
      * @param {string} travelMode BICYCLING|DRIVING|WALKING
+     * @param {number} avgSpeed Average Speed 1.25
+     * @param {string} avgSpeedMetric KPH|MPH
      * @param {object} trackList
      * @param {number} trackListCount
      */
@@ -248,10 +250,8 @@ tdapi.gmap = tdapi.gmap || {};
                         markerPointsCount;
                 
                 if (avgSpeed > 0) {
-                    console.log(avgSpeed);
                     speed = tdapi.distance.convert(avgSpeed).from(avgSpeedMetric).to('ms');
                     //toFixed is a String!!!! 
-                    console.log(typeof speed);
                     if (speed instanceof Error) {
                         $('#status').html(
                             "<strong>Warning!</strong> Average Speed value should be a number!<br />e.g. 1.00 or 10"
