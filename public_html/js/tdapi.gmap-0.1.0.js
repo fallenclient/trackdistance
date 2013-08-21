@@ -68,11 +68,11 @@ tdapi.gmap = tdapi.gmap || {};
         }
         playlistHighlights.length = 0;
     }
-    
-    
-        function resetSpeed() {
-            speed = "";
-        }
+
+
+    function resetSpeed() {
+        speed = "";
+    }
 
     /**
      * Create Marker
@@ -188,6 +188,58 @@ tdapi.gmap = tdapi.gmap || {};
     }
 
     /**
+     * R1
+     * Custom Directions Renderer
+     * Contains most of the functionailty of the example
+     */
+    function customDirectionsRenderer(startPoint, endPoint, map) {
+        var that = this;
+
+        this.directionsDisplay = new google.maps.DirectionsRenderer({
+            draggable: true,
+            suppressMarkers: true,
+            map: map
+        });
+
+        // Handle directions changed event
+        // ? Function called should call track marker/distance calcs
+        google.maps.event.addListener(this.directionsDisplay, 'directions_changed', function() {
+            checkWaypoints();
+        });
+
+        // Create new directions service
+        this.directionsService = new google.maps.DirectionsService();
+
+        // Unsure if this is waypoint marker creation
+        var draggedMarker,
+        waypointsMarkers = new Array();
+        this.map = map;
+        this.polyline = ''; // Generated from the directions request
+        this.polylinePoints = []; // Generated from the directions request will need passing on to distance/markers
+        
+        // Start Stop Markers
+        //<-- create Start and Stop Markers
+    /**this.startMarker = new google.maps.Marker({
+        position: startPoint,
+        title: 'Start',
+        map: map,
+        draggable: true,
+        optimized: false
+    });
+
+    this.endMarker = new google.maps.Marker({
+        position: endPoint,
+        title: 'End',
+        map: map,
+        draggable: true,
+        optimized: false
+    });*/
+    //-->
+    
+    
+    }
+
+    /**
      * Build Route
      * Makes the request to the google directions service, creates the polyline of the route,
      * creates the markers and the playlist highlighting
@@ -248,14 +300,14 @@ tdapi.gmap = tdapi.gmap || {};
                         duration = response.routes[0].legs[0].duration.value,
                         markerPoints,
                         markerPointsCount;
-                
+
                 if (avgSpeed > 0) {
                     speed = tdapi.distance.convert(avgSpeed).from(avgSpeedMetric).to('ms');
                     //toFixed is a String!!!! 
                     if (speed instanceof Error) {
                         $('#status').html(
-                            "<strong>Warning!</strong> Average Speed value should be a number!<br />e.g. 1.00 or 10"
-                            );
+                                "<strong>Warning!</strong> Average Speed value should be a number!<br />e.g. 1.00 or 10"
+                                );
                         $('#alertstatus').addClass('alert-error');
                         $('.alert').show();
                         speed = distance.toFixed(1) / Math.floor(duration);
@@ -278,6 +330,49 @@ tdapi.gmap = tdapi.gmap || {};
             }
         });
     }
+    
+    // R1 - This function needs splicing with build route
+    function update(setMarkersPositions) {
+        if (draggedMarker !== undefined) {
+            draggedMarker.timeout = undefined;
+        }
+        that.directionsDisplay.preserveViewport = true;
+
+        checkWaypoints();
+
+        var waypoints = [];
+        $.each(waypointsMarkers, function (idx, obj) {
+            waypoints.push({ location: obj.getPosition(), stopover: false });
+        });
+
+        var request = {
+            origin: that.startMarker.getPosition(),
+            destination: that.endMarker.getPosition(),
+            waypoints: waypoints,
+            travelMode: google.maps.DirectionsTravelMode.DRIVING
+        };
+
+        that.directionsService.route(request, function (response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                that.directionsDisplay.setDirections(response);
+
+                if (waypointsMarkers.length != response.routes[0].legs[0].via_waypoints.length) {
+                    createWaypointsMarkers(response.routes[0].legs[0].via_waypoints);
+                }
+
+                if (setMarkersPositions) {
+                    that.startMarker.setPosition(response.routes[0].legs[0].start_location);
+                    that.endMarker.setPosition(response.routes[0].legs[0].end_location);
+                    $.each(response.routes[0].legs[0].via_waypoints, function (idx, obj) {
+                        waypointsMarkers[idx].setPosition(obj);
+                    });
+                    that.polyline = response.routes[0].overview_polyline.points;
+                    that.polylinePoints = response.routes[0].overview_path;
+                }
+            }
+        });
+    }
+    // End of R1
 
     context.init = function() {
         var latlng = new google.maps.LatLng('51.382066781130575', '-2.14508056640625');
@@ -301,7 +396,7 @@ tdapi.gmap = tdapi.gmap || {};
                 buildRoute(from, to, travelMode, avgSpeed, avgSpeedMetric, trackList, trackListCount);
             } catch (ex) {
                 if (ex instanceof InvalidContext) {
-                    
+
                 }
             }
         };
