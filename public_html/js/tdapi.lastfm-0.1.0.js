@@ -218,17 +218,30 @@ tdapi.lastfm = tdapi.lastfm || {};
             }
         });
     }
+	
+	context.tokenReq = function() {
+		return true;
+	};
 
     context.init = function() {
-        beginLastFmLogin();
+        //beginLastFmLogin();
+		setAuthGetSession();
     };
+	
+	context.getToken = function() {
+		beginLastFmLogin();
+	};
 
     context.setToken = function(tokenString) {
         token = tokenString;
     };
+	
+	context.trackListCount = function() {
+		return trackListCount;
+	};
 
     context.handleUserSession = function() {
-        setAuthGetSession();
+        //setAuthGetSession();
     };
     context.handlePlaylistSelect = function(id) {
         getUserPlaylist(id);
