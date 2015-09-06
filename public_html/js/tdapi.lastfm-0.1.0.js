@@ -8,7 +8,7 @@
  */
 var tdapi = tdapi || {};
 tdapi.lastfm = tdapi.lastfm || {};
-(function(context) {
+(function(context, $, CryptoJS) {
     var APIKEY = '2420123bc3ba8126a3053b45f08ea829',
             SECRET = 'c6e6232262f55b2cc4a3f52f05c3892d',
             token,
@@ -258,4 +258,5 @@ tdapi.lastfm = tdapi.lastfm || {};
     context.handleNewPlayList = function(title, description) {
         createUserPlaylist(title, description);
     };
-})(tdapi.lastfm);
+})(tdapi.lastfm, jQuery, CryptoJS);
+console.log(CryptoJS);
